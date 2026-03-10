@@ -4,7 +4,6 @@ import google.generativeai as genai
 # --- 1. PENGATURAN HALAMAN & KEAMANAN ---
 st.set_page_config(page_title="Mr. Angiet Grammar Pro", page_icon="👨‍🏫")
 
-# Mengambil kunci dari brankas Secrets
 if "GOOGLE_API_KEY" in st.secrets:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 else:
@@ -35,26 +34,23 @@ if st.button("Analisis Sekarang"):
                 model = genai.GenerativeModel('gemini-flash-lite-latest')
                 prompt = f'Analyze this English text for grammar: "{input_teks}". Provide: 1. Corrected Version. 2. Explanation in Bahasa Indonesia.'
                 response = model.generate_content(prompt)
-                hasil_ai = response.text
-                
-                # Simpan ke memori sementara agar tidak hilang
-                st.session_state['hasil_copy'] = hasil_ai
+                st.session_state['hasil_copy'] = response.text
                 
             except Exception as e:
                 st.error(f"Terjadi kesalahan teknis: {e}")
 
-# Tampilkan hasil jika sudah ada di memori
+# --- 5. TAMPILAN HASIL (BISA DISALIN DENGAN TEKAN LAMA) ---
 if 'hasil_copy' in st.session_state:
     st.subheader("Hasil Analisis:")
     
-    # PETUNJUK MENCOLOK
-    st.warning("👇 **CARA SALIN KE WORD:** Klik ikon kotak di pojok kanan atas kotak abu-abu di bawah ini, lalu Paste di Word.")
+    # Petunjuk yang jauh lebih sederhana
+    st.warning("💡 **TIPS SALIN:** Tekan lama pada teks di dalam kotak bawah ini, lalu pilih 'Salin' (Copy) untuk dipindahkan ke Word.")
     
-    # Kotak Teks yang bisa disalin otomatis
-    st.code(st.session_state['hasil_copy'], language=None)
+    # Menggunakan text_area agar mudah di-blok/tekan lama di HP
+    st.text_area("Hasil (Bisa di-copy):", value=st.session_state['hasil_copy'], height=300)
     
-    st.success("Analisis Berhasil!")
+    st.success("Analisis Selesai!")
 
-# --- 5. FOOTER ---
+# --- 6. FOOTER ---
 st.divider()
 st.caption("Aplikasi Pembelajaran Mr. Angiet | 2026")
