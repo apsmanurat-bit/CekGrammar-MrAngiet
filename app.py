@@ -25,43 +25,44 @@ st.write("Selamat datang mahasiswa **English Dept. Politeknik MBP**! Silakan per
 # --- 3. INPUT TEKS ---
 input_teks = st.text_area("Masukkan teks bahasa Inggris:", height=150, placeholder="Contoh: I has a dream.")
 
-# --- 4. PROSES ANALISIS DENGAN AUTO-RETRY ---
+# --- 4. PROSES ANALISIS ---
 if st.button("Analisis Sekarang"):
     if not input_teks.strip():
         st.warning("Silakan masukkan teksnya dulu.")
     else:
         hasil_didapat = False
-        max_percobaan = 3
         
-        with st.spinner('Mr. Angiet sedang memeriksa... Mohon tunggu sebentar...'):
-            for i in range(max_percobaan):
+        with st.spinner('Mr. Angiet sedang memeriksa...'):
+            # Kita coba daftar nama model yang paling mungkin tersedia
+            # Mulai dari yang terbaru sampai yang standar
+            model_names = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro']
+            
+            for name in model_names:
                 try:
-                    # MENGGUNAKAN NAMA MODEL YANG PALING STANDAR
-                    model = genai.GenerativeModel('gemini-pro')
+                    model = genai.GenerativeModel(name)
                     prompt = f'Analyze this English text for grammar: "{input_teks}". Provide: 1. Corrected Version. 2. Short Explanation in Bahasa Indonesia.'
-                    
                     response = model.generate_content(prompt)
+                    
                     st.session_state['hasil_copy'] = response.text
                     hasil_didapat = True
-                    break 
-                
+                    break # Jika berhasil satu, langsung berhenti
                 except Exception as e:
-                    # Jika kena limit kuota (429), coba lagi otomatis
-                    if "429" in str(e) and i < max_percobaan - 1:
-                        time.sleep(3) 
-                        continue
+                    if "404" in str(e):
+                        continue # Jika 404, coba nama model berikutnya di daftar
                     else:
-                        st.error(f"Terjadi kesalahan: {e}")
+                        st.error(f"Terjadi kendala: {e}")
                         break
         
         if hasil_didapat:
             st.balloons()
+        else:
+            st.error("Maaf Pak, sistem Google tidak merespon nama model. Mohon pastikan API Key di Secrets sudah benar.")
 
 # --- 5. TAMPILAN HASIL ---
 if 'hasil_copy' in st.session_state:
     st.subheader("Hasil Analisis:")
-    st.info("💡 **INFO UNTUK MAHASISWA:** Tekan lama pada teks di bawah ini untuk Copy ke Word.")
-    st.text_area("Hasil (Tekan lama untuk Copy):", value=st.session_state['hasil_copy'], height=250)
+    st.info("💡 **INFO:** Tekan lama pada teks di bawah ini untuk Copy ke Word.")
+    st.text_area("Hasil:", value=st.session_state['hasil_copy'], height=250)
     st.success("Analisis Selesai!")
 
 # --- 6. FOOTER ---
