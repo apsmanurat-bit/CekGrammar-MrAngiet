@@ -1,6 +1,5 @@
 import streamlit as st
 import google.generativeai as genai
-import time
 
 # --- 1. PENGATURAN HALAMAN & KEAMANAN ---
 st.set_page_config(page_title="Mr. Angiet Grammar Pro", page_icon="👨‍🏫")
@@ -32,15 +31,18 @@ if st.button("Analisis Sekarang"):
     else:
         with st.spinner('Mr. Angiet sedang memeriksa... Mohon tunggu sebentar...'):
             try:
-                # MENGGUNAKAN MODEL PALING RINGAN (GEMINI 1.5 FLASH)
-                model = genai.GenerativeModel('gemini-1.5-flash')
+                # MENGGUNAKAN MODEL GEMINI-PRO (PALING STABIL)
+                model = genai.GenerativeModel('gemini-pro')
                 
                 prompt = f'Analyze this English text for grammar: "{input_teks}". Provide: 1. Corrected Version. 2. Explanation in Bahasa Indonesia.'
                 
                 response = model.generate_content(prompt)
+                
+                # Simpan ke memori sementara
                 st.session_state['hasil_copy'] = response.text
                 
             except Exception as e:
+                # Menangani kuota (429) dengan bahasa yang ramah
                 if "429" in str(e):
                     st.error("⚠️ SISTEM ANTRE: Kuota gratis sedang penuh. Mohon tunggu 30-60 detik lalu klik tombol Analisis lagi.")
                 else:
