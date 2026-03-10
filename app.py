@@ -10,14 +10,21 @@ if "GOOGLE_API_KEY" in st.secrets:
 else:
     st.error("Kunci API belum dipasang di menu Secrets!")
 
-# --- 2. TAMPILAN FOTO DAN JUDUL ---
-# Menampilkan foto Bapak (Anggiat-Simamora.jpg) yang sudah ada di GitHub
-try:
-    st.image("Anggiat-Simamora.jpg", width=200)
-except:
-    st.info("Sedang memproses tampilan foto...")
+# --- 2. TAMPILAN FOTO KECIL DAN JUDUL (SATU BARIS) ---
+# Kita bagi menjadi dua kolom: satu untuk foto kecil, satu untuk judul
+col1, col2 = st.columns([0.15, 0.85]) 
 
-st.title("👨‍🏫 Let Mr. Angiet Check Your Grammar")
+with col1:
+    # Menampilkan foto Bapak dalam ukuran kecil (seperti ikon)
+    try:
+        st.image("Anggiat-Simamora.jpg", width=60)
+    except:
+        st.write("👨‍🏫")
+
+with col2:
+    # Judul diletakkan tepat di sebelah foto
+    st.title("Let Mr. Angiet Check Your Grammar")
+
 st.write("Selamat datang! Masukkan teks bahasa Inggris Anda untuk diperiksa.")
 
 # --- 3. INPUT TEKS ---
