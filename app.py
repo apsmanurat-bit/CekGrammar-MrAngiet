@@ -15,7 +15,7 @@ with col1:
     try:
         st.image("Anggiat-Simamora.jpg", width=60)
     except:
-        st.write("👨‍🏫")
+        st.write("👨")
 with col2:
     st.title("Let Mr. Angiet Check Your Grammar")
 
@@ -31,8 +31,8 @@ if st.button("Analisis Sekarang"):
     else:
         with st.spinner('Mr. Angiet sedang memeriksa... Mohon tunggu sebentar...'):
             try:
-                # MENGGUNAKAN MODEL GEMINI-PRO (PALING STABIL)
-                model = genai.GenerativeModel('gemini-pro')
+                # MENGGUNAKAN NAMA MODEL TERBARU & PALING SPESIFIK
+                model = genai.GenerativeModel('gemini-1.5-flash-latest')
                 
                 prompt = f'Analyze this English text for grammar: "{input_teks}". Provide: 1. Corrected Version. 2. Explanation in Bahasa Indonesia.'
                 
@@ -44,7 +44,7 @@ if st.button("Analisis Sekarang"):
             except Exception as e:
                 # Menangani kuota (429) dengan bahasa yang ramah
                 if "429" in str(e):
-                    st.error("⚠️ SISTEM ANTRE: Kuota gratis sedang penuh. Mohon tunggu 30-60 detik lalu klik tombol Analisis lagi.")
+                    st.error("⚠️ SISTEM ANTRE: Kuota gratis sedang penuh. Mohon tunggu 1 menit lalu klik tombol Analisis lagi.")
                 else:
                     st.error(f"Terjadi kesalahan teknis: {e}")
 
