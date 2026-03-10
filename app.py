@@ -1,22 +1,27 @@
 import streamlit as st
 import google.generativeai as genai
 
-# API Key Bapak
-genai.configure(api_key="AIzaSyD-x6HjDBwkwuWO-Zt__QqSWOYt1_cv1wk")
+# --- BAGIAN KEAMANAN (MENGAMBIL KUNCI DARI SECRETS) ---
+if "GOOGLE_API_KEY" in st.secrets:
+    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+else:
+    st.error("Kunci API belum dipasang di menu Secrets Streamlit!")
 
-st.set_page_config(page_title="Mr. Angiet Grammar Lite", page_icon="👨‍🏫")
+st.set_page_config(page_title="Mr. Angiet Grammar Pro", page_icon="👨‍🏫")
+
+# --- TAMPILAN APLIKASI ---
 st.title("👨‍🏫 Let Mr. Angiet Check Your Grammar")
-st.write("Menggunakan Jalur 'Lite' (Lebih Cepat & Hemat Kuota)")
+st.write("Aplikasi Aktif - Jalur Aman & Terenkripsi")
 
 input_teks = st.text_area("Masukkan teks di sini:", height=150)
 
 if st.button("Analisis Sekarang"):
     if not input_teks.strip():
-        st.warning("Masukkan teksnya dulu, Pak Guru.")
+        st.warning("Silakan masukkan teksnya dulu, Pak Guru.")
     else:
         with st.spinner('Sedang menganalisis...'):
             try:
-                # Menggunakan model 'Lite' yang biasanya kuotanya lebih besar/tersedia
+                # Menggunakan model 'Lite' yang paling stabil
                 model = genai.GenerativeModel('gemini-flash-lite-latest')
                 
                 prompt = f"""
@@ -28,11 +33,10 @@ if st.button("Analisis Sekarang"):
                 response = model.generate_content(prompt)
                 st.subheader("Hasil Analisis:")
                 st.info(response.text)
-                st.success("Berhasil! Jalur Lite akhirnya terbuka.")
+                st.success("Analisis Berhasil!")
                 
             except Exception as e:
-                st.error(f"Sistem Google masih membatasi akses: {e}")
-                st.info("Pak Guru, jika ini tetap gagal, ada kemungkinan Bapak perlu membuat API Key baru di Google AI Studio karena Key yang ini sedang 'dihukum' sementara oleh Google.")
+                st.error(f"Terjadi kesalahan: {e}")
 
 st.divider()
-st.caption("Mr. Angiet Assistant | Jalur Hemat")
+st.caption("Mr. Angiet Assistant | Secured Version 2026")
