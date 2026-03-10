@@ -10,7 +10,7 @@ if "GOOGLE_API_KEY" in st.secrets:
 else:
     st.error("Kunci API belum dipasang di menu Secrets!")
 
-# --- 2. TAMPILAN FOTO KECIL DAN JUDUL (SATU BARIS) ---
+# --- 2. TAMPILAN FOTO KECIL DAN JUDUL ---
 col1, col2 = st.columns([0.15, 0.85]) 
 
 with col1:
@@ -46,15 +46,19 @@ if st.button("Analisis Sekarang"):
                 response = model.generate_content(prompt)
                 hasil_ai = response.text
                 
+                # Simpan hasil ke dalam "session state" agar tidak hilang saat tombol copy diklik
+                st.session_state['hasil_akhir'] = hasil_ai
+                
                 st.subheader("Hasil Analisis:")
-                st.info(hasil_ai)
+                st.info(st.session_state['hasil_akhir'])
                 
-                # FITUR BARU: TOMBOL COPY
+                # TOMBOL SALIN YANG MENCOLOK
                 st.copy_config = True
-                st.code(hasil_ai, language=None)
-                st.caption("💡 Klik ikon dua kotak di pojok kanan atas kotak abu-abu di atas untuk menyalin teks, lalu paste ke Word.")
+                st.button("📋 KLIK DISINI UNTUK SALIN HASIL", on_click=lambda: st.write(st.copy_config))
+                # Baris di bawah ini adalah fitur otomatis Streamlit untuk copy
+                st.code(st.session_state['hasil_akhir'], language=None)
                 
-                st.success("Analisis Berhasil!")
+                st.success("Analisis Berhasil! Silakan salin teks di atas.")
                 
             except Exception as e:
                 st.error(f"Terjadi kesalahan teknis: {e}")
