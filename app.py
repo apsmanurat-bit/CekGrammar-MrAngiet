@@ -11,18 +11,15 @@ else:
     st.error("Kunci API belum dipasang di menu Secrets!")
 
 # --- 2. TAMPILAN FOTO KECIL DAN JUDUL (SATU BARIS) ---
-# Kita bagi menjadi dua kolom: satu untuk foto kecil, satu untuk judul
 col1, col2 = st.columns([0.15, 0.85]) 
 
 with col1:
-    # Menampilkan foto Bapak dalam ukuran kecil (seperti ikon)
     try:
         st.image("Anggiat-Simamora.jpg", width=60)
     except:
         st.write("👨‍🏫")
 
 with col2:
-    # Judul diletakkan tepat di sebelah foto
     st.title("Let Mr. Angiet Check Your Grammar")
 
 st.write("Selamat datang! Masukkan teks bahasa Inggris Anda untuk diperiksa.")
@@ -37,7 +34,6 @@ if st.button("Analisis Sekarang"):
     else:
         with st.spinner('Sedang menganalisis... Mohon tunggu...'):
             try:
-                # Menggunakan model Gemini Flash Lite
                 model = genai.GenerativeModel('gemini-flash-lite-latest')
                 
                 prompt = f"""
@@ -48,9 +44,16 @@ if st.button("Analisis Sekarang"):
                 """
                 
                 response = model.generate_content(prompt)
+                hasil_ai = response.text
                 
                 st.subheader("Hasil Analisis:")
-                st.info(response.text)
+                st.info(hasil_ai)
+                
+                # FITUR BARU: TOMBOL COPY
+                st.copy_config = True
+                st.code(hasil_ai, language=None)
+                st.caption("💡 Klik ikon dua kotak di pojok kanan atas kotak abu-abu di atas untuk menyalin teks, lalu paste ke Word.")
+                
                 st.success("Analisis Berhasil!")
                 
             except Exception as e:
