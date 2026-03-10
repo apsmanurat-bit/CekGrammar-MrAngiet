@@ -1,5 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
+import time
 
 # --- 1. PENGATURAN HALAMAN & KEAMANAN ---
 st.set_page_config(page_title="Mr. Angiet Grammar Pro", page_icon="👨‍🏫")
@@ -29,28 +30,29 @@ if st.button("Analisis Sekarang"):
     if not input_teks.strip():
         st.warning("Silakan masukkan teksnya dulu, Pak Guru.")
     else:
-        with st.spinner('Sedang menganalisis... Mohon tunggu...'):
+        with st.spinner('Mr. Angiet sedang memeriksa... Mohon tunggu sebentar...'):
             try:
-                model = genai.GenerativeModel('gemini-flash-lite-latest')
+                # MENGGUNAKAN MODEL PALING RINGAN (GEMINI 1.5 FLASH)
+                model = genai.GenerativeModel('gemini-1.5-flash')
+                
                 prompt = f'Analyze this English text for grammar: "{input_teks}". Provide: 1. Corrected Version. 2. Explanation in Bahasa Indonesia.'
+                
                 response = model.generate_content(prompt)
                 st.session_state['hasil_copy'] = response.text
                 
             except Exception as e:
-                st.error(f"Terjadi kesalahan teknis: {e}")
+                if "429" in str(e):
+                    st.error("⚠️ SISTEM ANTRE: Kuota gratis sedang penuh. Mohon tunggu 30-60 detik lalu klik tombol Analisis lagi.")
+                else:
+                    st.error(f"Terjadi kesalahan teknis: {e}")
 
-# --- 5. TAMPILAN HASIL (BISA DISALIN DENGAN TEKAN LAMA) ---
+# --- 5. TAMPILAN HASIL ---
 if 'hasil_copy' in st.session_state:
     st.subheader("Hasil Analisis:")
-    
-    # Petunjuk yang jauh lebih sederhana
-    st.warning("💡 **TIPS SALIN:** Tekan lama pada teks di dalam kotak bawah ini, lalu pilih 'Salin' (Copy) untuk dipindahkan ke Word.")
-    
-    # Menggunakan text_area agar mudah di-blok/tekan lama di HP
+    st.warning("💡 **TIPS SALIN:** Tekan lama pada teks di bawah ini, lalu pilih 'Salin' (Copy) untuk dipindahkan ke Word.")
     st.text_area("Hasil (Bisa di-copy):", value=st.session_state['hasil_copy'], height=300)
-    
     st.success("Analisis Selesai!")
 
 # --- 6. FOOTER ---
 st.divider()
-st.caption("Aplikasi Pembelajaran Mr. Angiet | 2026")
+st.caption("English Dept. Politeknik MBP | 2026")
