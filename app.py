@@ -15,7 +15,7 @@ with col1:
     try:
         st.image("Anggiat-Simamora.jpg", width=60)
     except:
-        st.write("👨")
+        st.write("👨‍🏫")
 with col2:
     st.title("Let Mr. Angiet Check Your Grammar")
 
@@ -31,27 +31,27 @@ if st.button("Analisis Sekarang"):
     else:
         with st.spinner('Mr. Angiet sedang memeriksa... Mohon tunggu sebentar...'):
             try:
-                # MENGGUNAKAN NAMA MODEL TERBARU & PALING SPESIFIK
-                model = genai.GenerativeModel('gemini-1.5-flash-latest')
+                # KEMBALI KE MODEL YANG TADI SUDAH BERHASIL (GEMINI FLASH LITE)
+                model = genai.GenerativeModel('gemini-flash-lite-latest')
                 
                 prompt = f'Analyze this English text for grammar: "{input_teks}". Provide: 1. Corrected Version. 2. Explanation in Bahasa Indonesia.'
-                
                 response = model.generate_content(prompt)
                 
-                # Simpan ke memori sementara
+                # Simpan ke memori agar bisa di-copy tanpa hilang
                 st.session_state['hasil_copy'] = response.text
                 
             except Exception as e:
-                # Menangani kuota (429) dengan bahasa yang ramah
                 if "429" in str(e):
                     st.error("⚠️ SISTEM ANTRE: Kuota gratis sedang penuh. Mohon tunggu 1 menit lalu klik tombol Analisis lagi.")
                 else:
                     st.error(f"Terjadi kesalahan teknis: {e}")
 
-# --- 5. TAMPILAN HASIL ---
+# --- 5. TAMPILAN HASIL (TEKAN LAMA UNTUK COPY) ---
 if 'hasil_copy' in st.session_state:
     st.subheader("Hasil Analisis:")
-    st.warning("💡 **TIPS SALIN:** Tekan lama pada teks di bawah ini, lalu pilih 'Salin' (Copy) untuk dipindahkan ke Word.")
+    st.warning("💡 **TIPS SALIN:** Tekan lama pada teks di dalam kotak bawah ini, lalu pilih 'Salin' (Copy) untuk dipindahkan ke Word.")
+    
+    # Menggunakan text_area agar mahasiswa di HP bisa tekan lama dan blok teks
     st.text_area("Hasil (Bisa di-copy):", value=st.session_state['hasil_copy'], height=300)
     st.success("Analisis Selesai!")
 
