@@ -33,28 +33,29 @@ if st.button("Analisis Sekarang"):
         hasil_didapat = False
         max_percobaan = 3
         
-        with st.spinner('Mr. Angiet sedang memeriksa... (Jika antre, sistem akan mencoba otomatis)'):
+        with st.spinner('Mr. Angiet sedang memeriksa... Mohon tunggu sebentar...'):
             for i in range(max_percobaan):
                 try:
-                    # Menggunakan model Flash yang punya kuota gratis lebih longgar
-                    model = genai.GenerativeModel('gemini-1.5-flash')
+                    # MENGGUNAKAN NAMA MODEL YANG PALING STANDAR
+                    model = genai.GenerativeModel('gemini-pro')
                     prompt = f'Analyze this English text for grammar: "{input_teks}". Provide: 1. Corrected Version. 2. Short Explanation in Bahasa Indonesia.'
                     
                     response = model.generate_content(prompt)
                     st.session_state['hasil_copy'] = response.text
                     hasil_didapat = True
-                    break # Berhasil, keluar dari perulangan
+                    break 
                 
                 except Exception as e:
+                    # Jika kena limit kuota (429), coba lagi otomatis
                     if "429" in str(e) and i < max_percobaan - 1:
-                        time.sleep(2) # Tunggu 2 detik sebelum coba lagi
+                        time.sleep(3) 
                         continue
                     else:
-                        st.error(f"Sistem sedang sangat sibuk. Mohon tunggu 1 menit lalu coba lagi ya. (Error: {e})")
+                        st.error(f"Terjadi kesalahan: {e}")
                         break
         
         if hasil_didapat:
-            st.balloons() # Efek perayaan kecil jika berhasil
+            st.balloons()
 
 # --- 5. TAMPILAN HASIL ---
 if 'hasil_copy' in st.session_state:
