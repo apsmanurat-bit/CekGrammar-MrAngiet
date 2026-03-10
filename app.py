@@ -12,13 +12,11 @@ else:
 
 # --- 2. TAMPILAN FOTO KECIL DAN JUDUL ---
 col1, col2 = st.columns([0.15, 0.85]) 
-
 with col1:
     try:
         st.image("Anggiat-Simamora.jpg", width=60)
     except:
         st.write("👨‍🏫")
-
 with col2:
     st.title("Let Mr. Angiet Check Your Grammar")
 
@@ -35,33 +33,27 @@ if st.button("Analisis Sekarang"):
         with st.spinner('Sedang menganalisis... Mohon tunggu...'):
             try:
                 model = genai.GenerativeModel('gemini-flash-lite-latest')
-                
-                prompt = f"""
-                Analyze this English text for grammar: "{input_teks}"
-                Provide:
-                1. Corrected Version
-                2. Explanation in Bahasa Indonesia.
-                """
-                
+                prompt = f'Analyze this English text for grammar: "{input_teks}". Provide: 1. Corrected Version. 2. Explanation in Bahasa Indonesia.'
                 response = model.generate_content(prompt)
                 hasil_ai = response.text
                 
-                # Simpan hasil ke dalam "session state" agar tidak hilang saat tombol copy diklik
-                st.session_state['hasil_akhir'] = hasil_ai
-                
-                st.subheader("Hasil Analisis:")
-                st.info(st.session_state['hasil_akhir'])
-                
-                # TOMBOL SALIN YANG MENCOLOK
-                st.copy_config = True
-                st.button("📋 KLIK DISINI UNTUK SALIN HASIL", on_click=lambda: st.write(st.copy_config))
-                # Baris di bawah ini adalah fitur otomatis Streamlit untuk copy
-                st.code(st.session_state['hasil_akhir'], language=None)
-                
-                st.success("Analisis Berhasil! Silakan salin teks di atas.")
+                # Simpan ke memori sementara agar tidak hilang
+                st.session_state['hasil_copy'] = hasil_ai
                 
             except Exception as e:
                 st.error(f"Terjadi kesalahan teknis: {e}")
+
+# Tampilkan hasil jika sudah ada di memori
+if 'hasil_copy' in st.session_state:
+    st.subheader("Hasil Analisis:")
+    
+    # PETUNJUK MENCOLOK
+    st.warning("👇 **CARA SALIN KE WORD:** Klik ikon kotak di pojok kanan atas kotak abu-abu di bawah ini, lalu Paste di Word.")
+    
+    # Kotak Teks yang bisa disalin otomatis
+    st.code(st.session_state['hasil_copy'], language=None)
+    
+    st.success("Analisis Berhasil!")
 
 # --- 5. FOOTER ---
 st.divider()
